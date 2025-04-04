@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Air Quality Index Calculator</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <header class="header">
+    <div class="logo">
+      <img src="logoooair.jpeg" alt="Logo" width="50">
+      <h1>AQI Calculator</h1>
+    </div>
+  </header>
+  <main class="container">
+    <section class="hero">
+      <img src="imair.jpeg" alt="Air Quality Image" class="hero-image">
+      <h2>Calculate Your Local Air Quality Index</h2>
+    </section>
+
+    <section class="calculator">
+      <h3>Enter Pollutant Concentration (µg/m³):</h3>
+      <form id="aqi-form">
+        <label for="pm25">PM2.5:</label>
+        <input type="number" id="pm25" placeholder="Enter PM2.5 value" required>
+
+        <label for="pm10">PM10:</label>
+        <input type="number" id="pm10" placeholder="Enter PM10 value" required>
+
+        <button type="submit">Calculate AQI</button>
+      </form>
+
+      <div id="result" class="result"></div>
+    </section>
+  </main>
+  <footer class="footer">
+    <p>&copy; 2023 AQI Calculator. All rights reserved.</p>
+  </footer>
+
+  <script>
+    document.getElementById('aqi-form').addEventListener('submit', function (e) {
+      e.preventDefault();
+      const pm25 = parseFloat(document.getElementById('pm25').value);
+      const pm10 = parseFloat(document.getElementById('pm10').value);
+
+      if (isNaN(pm25) || isNaN(pm10)) {
+        document.getElementById('result').innerHTML = '<p class="error">Please enter valid numbers.</p>';
+        return;
+      }
+      const aqiPm25 = calculateAQI(pm25, 0, 12, 0, 50); 
+      const aqiPm10 = calculateAQI(pm10, 0, 50, 0, 50); 
+
+      const overallAQI = Math.max(aqiPm25, aqiPm10);
+
+      document.getElementById('result').innerHTML = `
+        <p>Your calculated AQI is: <strong>${overallAQI}</strong></p>
+        <p>${getAQIMessage(overallAQI)}</p>
+      `;
+    });
+
+    function calculateAQI(concentration, clow, chigh, alow, ahigh) {
+      return ((concentration - clow) / (chigh - clow)) * (ahigh - alow) + alow;
+    }
+    function getAQIMessage(aqi) {
+      if (aqi <= 50) return 'Good - Air quality is satisfactory.';
+      if (aqi <= 100) return 'Moderate - Air quality is acceptable.';
+      if (aqi <= 150) return 'Unhealthy for Sensitive Groups.';
+      if (aqi <= 200) return 'Unhealthy - Everyone may experience health effects.';
+      if (aqi <= 300) return 'Very Unhealthy - Health alert.';
+      return 'Hazardous - Emergency conditions.';
+    }
+  </script>
+</body>
+</html>
